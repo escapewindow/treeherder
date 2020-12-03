@@ -18,8 +18,7 @@ from . import failureline
 logger = logging.getLogger(__name__)
 
 
-@retryable_task(name='log-parser', max_retries=10)
-def parse_logs(job_id, job_log_ids, priority):
+def parse_logs(queue, job_id, job_log_ids, priority):
     newrelic.agent.add_custom_parameter("job_id", str(job_id))
 
     job = Job.objects.get(id=job_id)
@@ -55,7 +54,8 @@ def parse_logs(job_id, job_log_ids, priority):
             continue
 
         try:
-            parser(job_log)
+            # XXX should I send priority? I don't see where we use it
+            parser.apply_async(queue=queue, args=[job_log])
         except Exception as e:
             if isinstance(e, SoftTimeLimitExceeded):
                 # stop parsing further logs but raise so NewRelic and
@@ -76,6 +76,7 @@ def parse_logs(job_id, job_log_ids, priority):
         raise first_exception
 
 
+@retryable_task(name='error-parser', max_retries=10)
 def store_failure_lines(job_log):
     """Store the failure lines from a log corresponding to the structured
     errorsummary file."""
@@ -83,6 +84,7 @@ def store_failure_lines(job_log):
     failureline.store_failure_lines(job_log)
 
 
+@retryable_task(name='log-parser', max_retries=10)
 def post_log_artifacts(job_log):
     """Post a list of artifacts to a job."""
     logger.debug("Downloading/parsing log for log %s", job_log.id)

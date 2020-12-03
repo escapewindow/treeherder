@@ -356,7 +356,8 @@ def _schedule_log_parsing(job, job_logs, result, repository):
             queue = 'log_parser'
             priority = "normal"
 
-    parse_logs.apply_async(queue=queue, args=[job.id, job_log_ids, priority])
+        # parse_logs.apply_async(queue=queue, args=[job.id, job_log_ids, priority])
+        parse_logs(queue, job.id, job_log_ids, priority)
 
 
 def store_job_data(repository, originalData):
