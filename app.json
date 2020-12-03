@@ -75,7 +75,19 @@
       "quantity": 1,
       "size": "Standard-1X"
     },
-    "worker_log_parser_fail": {
+    "worker_log_parser_fail_sheriffed": {
+      "quantity": 1,
+      "size": "Standard-1X"
+    },
+    "worker_log_parser_fail_unsheriffed": {
+      "quantity": 1,
+      "size": "Standard-1X"
+    },
+    "error_log_parser_fail_sheriffed": {
+      "quantity": 1,
+      "size": "Standard-1X"
+    },
+    "error_log_parser_fail_unsheriffed": {
       "quantity": 1,
       "size": "Standard-1X"
     },
