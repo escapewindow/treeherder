@@ -4,14 +4,14 @@ import ast
 import re
 import sys
 
-procfile_re = re.compile(r"worker_\w*: .* -Q ([^ ]*)")
+procfile_re = re.compile(r"(worker|error)_\w*: .* -Q ([^ ]*)")
 
 procfile_queues = []
 with open("Procfile") as f:
     for line in f:
         m = procfile_re.match(line)
         if m:
-            procfile_queues.extend(m.group(1).split(","))
+            procfile_queues.extend(m.group(2).split(","))
 
 
 code = ast.parse(open("treeherder/config/settings.py").read())
